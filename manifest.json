@@ -1,15 +1,23 @@
 {
   "manifest_version": 3,
   "name": "Boss 求职助手 · 开源版",
-  "version": "0.1.0",
+  "version": "0.0.3",
   "description": "本地运行的 Boss 直聘求职助手：抓取岗位成表格、JD 要点解析、匹配度与话术。填自己的 LLM 凭证即可启用 AI，数据不出浏览器。",
   "minimum_chrome_version": "114",
   "action": {
     "default_title": "Boss 求职助手 · 开源版"
   },
-  "permissions": ["sidePanel", "storage", "scripting"],
-  "host_permissions": ["https://www.zhipin.com/*"],
-  "optional_host_permissions": ["*://*/*"],
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://www.zhipin.com/*"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
   "background": {
     "service_worker": "src/background/service-worker.js"
   },
@@ -18,24 +26,43 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.zhipin.com/*"],
-      "js": ["src/net-hook.js"],
+      "matches": [
+        "https://www.zhipin.com/*"
+      ],
+      "js": [
+        "src/net-hook.js"
+      ],
       "run_at": "document_start",
       "world": "MAIN"
     },
     {
-      "matches": ["https://www.zhipin.com/web/geek/jobs*"],
-      "js": ["src/shared.js", "src/jobs.js"],
+      "matches": [
+        "https://www.zhipin.com/web/geek/jobs*"
+      ],
+      "js": [
+        "src/shared.js",
+        "src/jobs.js"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://www.zhipin.com/web/geek/chat*"],
-      "js": ["src/shared.js", "src/chat.js"],
+      "matches": [
+        "https://www.zhipin.com/web/geek/chat*"
+      ],
+      "js": [
+        "src/shared.js",
+        "src/chat.js"
+      ],
       "run_at": "document_idle"
     },
     {
-      "matches": ["https://www.zhipin.com/job_detail/*"],
-      "js": ["src/shared.js", "src/jobpage.js"],
+      "matches": [
+        "https://www.zhipin.com/job_detail/*"
+      ],
+      "js": [
+        "src/shared.js",
+        "src/jobpage.js"
+      ],
       "run_at": "document_idle"
     }
   ],
