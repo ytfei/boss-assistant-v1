@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="Boss 求职助手">
+  <title>Boss 求职助手（小尺寸）</title>
+  <defs>
+    <linearGradient id="baIconSmallBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D69E8"/>
+      <stop offset="1" stop-color="#3B46C8"/>
+    </linearGradient>
+  </defs>
+
+  <!--
+    Chrome 工具栏只显示 16–32px。此时列表条目会糊成一团（已实测），
+    所以小尺寸只保留对勾：单一粗笔画，缩到 16px 依然清晰。
+  -->
+  <rect width="48" height="48" rx="12" fill="url(#baIconSmallBg)"/>
+
+  <path d="M12.5 25.5 L20 33 L36 15.5"
+        fill="none" stroke="#FFFFFF" stroke-width="6.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

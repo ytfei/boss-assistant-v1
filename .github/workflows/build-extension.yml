@@ -44,14 +44,15 @@ jobs:
         run: node tests/run.js
 
       # Chrome 扩展的 zip 必须把 manifest.json 放在根目录；
-      # 只打包运行所需文件（manifest.json + src + LICENSE），
-      # 不包含 tests / README / .github，保持加载包干净。
+      # 只打包运行所需文件（manifest.json + src + icons + LICENSE），
+      # 不包含 tests / README / assets / .github，保持加载包干净。
+      # ⚠️ icons 必须打进去：manifest.json 的 icons 字段引用了它，缺了会加载失败。
       - name: Package extension
         id: pack
         run: |
           NAME="boss-assistant-v${{ steps.meta.outputs.version }}"
           mkdir -p dist
-          zip -r "dist/${NAME}.zip" manifest.json src LICENSE
+          zip -r "dist/${NAME}.zip" manifest.json src icons LICENSE
           echo "zip=dist/${NAME}.zip" >> "$GITHUB_OUTPUT"
           echo "生成：dist/${NAME}.zip"
           unzip -l "dist/${NAME}.zip"

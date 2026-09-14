@@ -35,7 +35,7 @@ version:
 
 package:
 	@rm -f $(ZIP)
-	@zip -r $(ZIP) $(MANIFEST) src LICENSE >/dev/null
+	@zip -r $(ZIP) $(MANIFEST) src icons LICENSE >/dev/null
 	@echo "已生成 $(ZIP)"
 
 clean:

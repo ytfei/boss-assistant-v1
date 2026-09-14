@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="Boss 求职助手">
+  <title>Boss 求职助手</title>
+  <defs>
+    <linearGradient id="baIconBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D69E8"/>
+      <stop offset="1" stop-color="#3B46C8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 底：圆角方块（25% 圆角，接近系统图标比例） -->
+  <rect width="48" height="48" rx="12" fill="url(#baIconBg)"/>
+
+  <!-- 岗位列表：两行条目，宽度递减 -->
+  <g fill="#FFFFFF">
+    <rect x="11.5" y="9.5" width="25" height="5" rx="2.5"/>
+    <rect x="11.5" y="19" width="14" height="5" rx="2.5"/>
+  </g>
+
+  <!-- 匹配命中：对勾，与条目左对齐 -->
+  <path d="M11.5 30 L17.5 36 L31.5 24"
+        fill="none" stroke="#FFFFFF" stroke-width="5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -164,6 +164,16 @@ boss-assistant-v1/
 ├── README.md / LICENSE        # MIT 协议
 ├── .github/workflows/
 │   └── build-extension.yml    # CI：测试 → 打包 zip → 发布 Packages / Release
+├── assets/
+│   ├── logo.svg               # 横版组合标（文字用 currentColor，深浅底通用）
+│   ├── icon.svg               # 图标源文件（48px 及以上）
+│   ├── icon-small.svg         # 小尺寸图标源文件（16/32px，只保留对勾）
+│   └── preview.html           # 品牌资源预览 + PNG 导出（可离线打开）
+├── icons/                     # 扩展运行时图标（PNG，由 assets/*.svg 导出）
+│   ├── icon-16.png            #   16px 工具栏
+│   ├── icon-32.png            #   32px 工具栏 HiDPI
+│   ├── icon-48.png            #   48px 扩展管理页
+│   └── icon-128.png           #  128px 安装弹窗 / 应用商店
 ├── tests/
 │   └── run.js                 # 纯函数自测（node tests/run.js）
 └── src/

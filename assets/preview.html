@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boss 求职助手 · 品牌资源</title>
+<style>
+  :root {
+    --brand: #4f5bd5;
+    --brand-soft: #eef0fe;
+    --text: #1b1d21;
+    --sub: #5a606b;
+    --muted: #949aa5;
+    --line: #ebedf0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    color: var(--text);
+    background: #f7f8fb;
+    padding: 44px 24px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; }
+
+  .page-head { margin-bottom: 28px; }
+  .page-head h1 { font-size: 19px; font-weight: 800; letter-spacing: .2px; }
+  .page-head p { color: var(--sub); font-size: 13.5px; margin-top: 6px; }
+  .page-head code, .note code { background: #eceef6; border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+
+  .card {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 22px 24px; margin-bottom: 18px;
+  }
+  .card > h2 {
+    font-size: 13px; font-weight: 700; color: var(--sub);
+    letter-spacing: 1.2px; text-transform: uppercase;
+    padding-bottom: 12px; margin-bottom: 18px; border-bottom: 1px solid var(--line);
+  }
+  .card > h2 small { float: right; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
+
+  /* 组合标 */
+  .stage { border-radius: 12px; padding: 26px 24px; display: flex; align-items: center; }
+  .stage + .stage { margin-top: 12px; }
+  .stage.light { background: #fff; border: 1px solid var(--line); }
+  .stage.dark { background: #14161c; color: #fff; }
+  .stage .logo { line-height: 0; }
+  .tag { font-size: 11.5px; color: var(--muted); margin-top: 10px; }
+
+  /* 图标尺寸 */
+  .grp + .grp { margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--line); }
+  .grp-t { font-size: 12.5px; font-weight: 600; margin-bottom: 12px; }
+  .grp-t em { font-style: normal; font-weight: 400; color: var(--muted); margin-left: 6px; }
+  .sizes { display: flex; align-items: flex-end; gap: 26px; flex-wrap: wrap; }
+  .size { text-align: center; }
+  .size .box { line-height: 0; display: block; }
+  .size .lbl { font-size: 11px; color: var(--muted); display: block; margin-top: 8px; }
+  .on-dark .size .lbl { color: #7b8291; }
+
+  /* 导出 */
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  button {
+    font: inherit; font-size: 13px; cursor: pointer;
+    border: 1px solid var(--line); background: #fff; color: var(--text);
+    border-radius: 8px; padding: 7px 13px; transition: .15s;
+  }
+  button:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+  button.primary { background: var(--brand); border-color: var(--brand); color: #fff; }
+  button.primary:hover { background: #3d49c9; color: #fff; }
+  .note { font-size: 12.5px; color: var(--sub); margin-top: 14px; }
+
+  pre {
+    background: #f8f9fc; border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 16px; overflow: auto; font-size: 12.5px; line-height: 1.75;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #303540;
+  }
+  .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sw { width: 108px; }
+  .sw i { display: block; height: 46px; border-radius: 9px; border: 1px solid rgba(0,0,0,.06); }
+  .sw b { display: block; font-size: 11.5px; margin-top: 7px; }
+  .sw span { display: block; font-size: 11px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+
+  #toast {
+    position: fixed; left: 50%; bottom: 32px; transform: translate(-50%, 14px);
+    background: #1b1d21; color: #fff; font-size: 13px; padding: 9px 16px; border-radius: 9px;
+    opacity: 0; pointer-events: none; transition: .22s;
+  }
+  #toast.on { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-head">
+    <h1>Boss 求职助手 · 品牌资源</h1>
+    <p>
+      图标语义：<b>岗位列表 → 解析 → 匹配命中</b>（两行条目 + 对勾）。配色取自扩展面板的品牌变量 <code>--brand</code>。
+    </p>
+  </div>
+
+  <!-- 组合标 -->
+  <section class="card">
+    <h2>组合标 Logo <small>浅色底</small></h2>
+    <div class="stage light"><div class="logo" id="logoLight"></div></div>
+    <p class="tag">文字使用 <code>currentColor</code>，浅底自动为深色文字。</p>
+  </section>
+
+  <section class="card">
+    <h2>组合标 Logo <small>深色底</small></h2>
+    <div class="stage dark"><div class="logo" id="logoDark"></div></div>
+    <p class="tag">同一个 SVG 文件，只需容器 <code>color:#fff</code> 即可反色，无需维护第二份。</p>
+  </section>
+
+  <!-- 应用图标 -->
+  <section class="card">
+    <h2>应用图标 Icon <small>icon.svg</small></h2>
+    <div class="sizes" id="sizesFull"></div>
+    <p class="tag">用于 48px 及以上：扩展详情页、README、面板内展示。</p>
+  </section>
+
+  <section class="card">
+    <h2>小尺寸图标 Icon <small>icon-small.svg</small></h2>
+    <div class="grp">
+      <div class="grp-t">简化版 <em>icon-small.svg（推荐）</em></div>
+      <div class="sizes" id="sizesSmall"></div>
+    </div>
+    <div class="grp">
+      <div class="grp-t">完整版 <em>icon.svg（对比）</em></div>
+      <div class="sizes" id="sizesFullSmall"></div>
+    </div>
+    <p class="note">
+      Chrome 工具栏只显示 16–32px。完整版在这个尺寸下条目会挤在一起，因此单独提供简化版：
+      只保留对勾这一单一粗笔画，缩到 16px 依然清晰。
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>深色底 <small>Icon</small></h2>
+    <div class="sizes on-dark" id="sizesDark" style="background:#14161c;border-radius:12px;padding:24px"></div>
+  </section>
+
+  <!-- 导出 -->
+  <section class="card">
+    <h2>导出 PNG <small>Chrome 扩展需要位图</small></h2>
+    <div class="row">
+      <button class="primary" data-size="16">16 × 16</button>
+      <button class="primary" data-size="32">32 × 32</button>
+      <button class="primary" data-size="48">48 × 48</button>
+      <button class="primary" data-size="128">128 × 128</button>
+      <button data-copy="icon">复制 icon.svg</button>
+      <button data-copy="small">复制 icon-small.svg</button>
+      <button data-copy="logo">复制 logo.svg</button>
+    </div>
+    <p class="note">
+      Chrome 的 <code>manifest.json</code> 只接受 PNG，不接受 SVG。16 / 32 取自简化版，48 / 128 取自完整版。
+      仓库的 <code>icons/</code> 已按这个规则生成并接好线；如需重新生成，点上方按钮下载后覆盖同名文件即可。
+    </p>
+    <pre>
+"icons": {
+  "16":  "icons/icon-16.png",
+  "32":  "icons/icon-32.png",
+  "48":  "icons/icon-48.png",
+  "128": "icons/icon-128.png"
+},
+"action": {
+  "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png" }
+}</pre>
+    <p class="note">本页可离线双击打开 —— 导出走 data URI + canvas，不依赖网络。</p>
+  </section>
+
+  <!-- 色板 -->
+  <section class="card">
+    <h2>品牌色</h2>
+    <div class="swatches">
+      <div class="sw"><i style="background:linear-gradient(#5D69E8,#3B46C8)"></i><b>主渐变</b><span>#5D69E8 → #3B46C8</span></div>
+      <div class="sw"><i style="background:#4f5bd5"></i><b>Brand</b><span>#4F5BD5</span></div>
+      <div class="sw"><i style="background:#eef0fe"></i><b>Brand Soft</b><span>#EEF0FE</span></div>
+      <div class="sw"><i style="background:#17b26a"></i><b>匹配 · 已具备</b><span>#17B26A</span></div>
+      <div class="sw"><i style="background:#f79009"></i><b>匹配 · 没写透</b><span>#F79009</span></div>
+      <div class="sw"><i style="background:#f04438"></i><b>匹配 · 缺失</b><span>#F04438</span></div>
+    </div>
+  </section>
+
+  <!-- 用法 -->
+  <section class="card">
+    <h2>在 README 中使用</h2>
+    <pre>
+&lt;img src="assets/logo.svg" alt="Boss 求职助手" width="300"&gt;
+
+&lt;!-- 只要图形、不要文字时 --&gt;
+&lt;img src="assets/icon.svg" alt="Boss 求职助手" width="64"&gt;</pre>
+  </section>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ---------------------------------------------------------------
+   与 assets/*.svg 保持一致的源串。内联是为了能离线导出 PNG；
+   改动 SVG 文件时请同步这里的字符串。
+---------------------------------------------------------------- */
+const ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="baIconBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D69E8"/>
+      <stop offset="1" stop-color="#3B46C8"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#baIconBg)"/>
+  <g fill="#FFFFFF">
+    <rect x="11.5" y="9.5" width="25" height="5" rx="2.5"/>
+    <rect x="11.5" y="19" width="14" height="5" rx="2.5"/>
+  </g>
+  <path d="M11.5 30 L17.5 36 L31.5 24" fill="none" stroke="#FFFFFF" stroke-width="5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+const ICON_SMALL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="baIconSmallBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D69E8"/>
+      <stop offset="1" stop-color="#3B46C8"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="12" fill="url(#baIconSmallBg)"/>
+  <path d="M12.5 25.5 L20 33 L36 15.5" fill="none" stroke="#FFFFFF" stroke-width="6.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 96" width="300" height="96">
+  <defs>
+    <linearGradient id="baLogoBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D69E8"/>
+      <stop offset="1" stop-color="#3B46C8"/>
+    </linearGradient>
+    <style>
+      .ba-t1,.ba-t2{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+      .ba-t1{font-size:30px;font-weight:700;fill:currentColor;letter-spacing:.5px}
+      .ba-t2{font-size:12px;font-weight:500;fill:currentColor;opacity:.55;letter-spacing:1px}
+    </style>
+  </defs>
+  <g transform="translate(0,16) scale(1.3333333)">
+    <rect width="48" height="48" rx="12" fill="url(#baLogoBg)"/>
+    <g fill="#FFFFFF">
+      <rect x="11.5" y="9.5" width="25" height="5" rx="2.5"/>
+      <rect x="11.5" y="19" width="14" height="5" rx="2.5"/>
+    </g>
+    <path d="M11.5 30 L17.5 36 L31.5 24" fill="none" stroke="#FFFFFF" stroke-width="5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text class="ba-t1" x="82" y="47">求职助手</text>
+  <text class="ba-t2" x="82" y="70">BOSS 直聘 · 开源版 · 本地运行</text>
+</svg>`;
+
+/* ---------------------------------------------------------------
+   渲染
+---------------------------------------------------------------- */
+function atSize(svg, size) {
+  return svg.replace('width="48" height="48"', `width="${size}" height="${size}"`)
+            .replace('<svg ', '<svg style="display:block" ');
+}
+
+function grid(el, svg, sizes) {
+  el.innerHTML = sizes
+    .map((s) => `<div class="size"><span class="box">${atSize(svg, s)}</span><span class="lbl">${s}px</span></div>`)
+    .join('');
+}
+
+document.getElementById('logoLight').innerHTML = LOGO_SVG;
+document.getElementById('logoDark').innerHTML = LOGO_SVG;
+
+grid(document.getElementById('sizesFull'), ICON_SVG, [48, 64, 128, 256]);
+grid(document.getElementById('sizesSmall'), ICON_SMALL_SVG, [16, 24, 32]);
+grid(document.getElementById('sizesFullSmall'), ICON_SVG, [16, 24, 32]);
+grid(document.getElementById('sizesDark'), ICON_SVG, [48, 128, 256]);
+
+/* ---------------------------------------------------------------
+   PNG 导出：SVG 字符串 → data URI → canvas → blob
+   用 data URI 而非 file:// 路径，避免 canvas 被判跨域而无法导出。
+---------------------------------------------------------------- */
+function svgDataUrl(svg) {
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('SVG 渲染失败'));
+    img.src = src;
+  });
+}
+
+/* 16 / 32 用简化版，48 及以上用完整版 */
+const SMALL_MAX = 32;
+
+async function downloadIconPng(size) {
+  const svg = size <= SMALL_MAX ? ICON_SMALL_SVG : ICON_SVG;
+  const img = await loadImage(svgDataUrl(svg));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, size, size);
+  ctx.drawImage(img, 0, 0, size, size);
+
+  const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'));
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `icon-${size}.png`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  toast(`已导出 icon-${size}.png`);
+}
+
+document.querySelectorAll('[data-size]').forEach((btn) =>
+  btn.addEventListener('click', () =>
+    downloadIconPng(Number(btn.dataset.size)).catch((e) => toast(e.message))
+  )
+);
+
+/* ---------------------------------------------------------------
+   复制源码（file:// 下 clipboard API 不可用，退回 execCommand）
+---------------------------------------------------------------- */
+const SOURCES = { icon: ICON_SVG, small: ICON_SMALL_SVG, logo: LOGO_SVG };
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast('已复制'); }
+  catch (_) { toast('复制失败，请手动选择'); }
+  ta.remove();
+}
+
+function copy(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => toast('已复制'), () => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+document.querySelectorAll('[data-copy]').forEach((btn) =>
+  btn.addEventListener('click', () => copy(SOURCES[btn.dataset.copy]))
+);
+
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 1700);
+}
+</script>
+</body>
+</html>

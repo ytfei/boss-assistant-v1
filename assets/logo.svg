@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 96" width="300" height="96" role="img" aria-label="Boss 求职助手 · 开源版">
+  <title>Boss 求职助手 · 开源版</title>
+
+  <defs>
+    <linearGradient id="baLogoBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5D69E8"/>
+      <stop offset="1" stop-color="#3B46C8"/>
+    </linearGradient>
+
+    <!--
+      文字用 currentColor，因此同一个文件在浅色 / 深色底上都可直接使用：
+      深色底只需给容器设置 color:#fff。
+    -->
+    <style>
+      .ba-t1, .ba-t2 {
+        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+                     "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+      }
+      .ba-t1 { font-size: 30px; font-weight: 700; fill: currentColor; letter-spacing: .5px; }
+      .ba-t2 { font-size: 12px; font-weight: 500; fill: currentColor; opacity: .55; letter-spacing: 1px; }
+    </style>
+  </defs>
+
+  <!-- 图标（48 网格 → 64px） -->
+  <g transform="translate(0,16) scale(1.3333333)">
+    <rect width="48" height="48" rx="12" fill="url(#baLogoBg)"/>
+    <g fill="#FFFFFF">
+      <rect x="11.5" y="9.5" width="25" height="5" rx="2.5"/>
+      <rect x="11.5" y="19" width="14" height="5" rx="2.5"/>
+    </g>
+    <path d="M11.5 30 L17.5 36 L31.5 24"
+          fill="none" stroke="#FFFFFF" stroke-width="5"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 字标 -->
+  <text class="ba-t1" x="82" y="47">求职助手</text>
+  <text class="ba-t2" x="82" y="70">BOSS 直聘 · 开源版 · 本地运行</text>
+</svg>

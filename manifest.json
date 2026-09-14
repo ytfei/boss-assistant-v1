@@ -5,7 +5,11 @@
   "description": "本地运行的 Boss 直聘求职助手：抓取岗位成表格、JD 要点解析、匹配度与话术。填自己的 LLM 凭证即可启用 AI，数据不出浏览器。",
   "minimum_chrome_version": "114",
   "action": {
-    "default_title": "Boss 求职助手 · 开源版"
+    "default_title": "Boss 求职助手 · 开源版",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
   },
   "permissions": [
     "sidePanel",
@@ -66,5 +70,10 @@
       "run_at": "document_idle"
     }
   ],
-  "icons": {}
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  }
 }
