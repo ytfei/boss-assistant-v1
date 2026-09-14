@@ -159,7 +159,11 @@
 ```
 boss-assistant-v1/
 ├── manifest.json              # MV3 清单：权限、侧边栏、内容脚本注入
+├── package.json               # npm 元数据（零依赖，仅用于发布 GitHub Packages）
+├── Makefile                   # 开发与发版命令（make release v0.0.3）
 ├── README.md / LICENSE        # MIT 协议
+├── .github/workflows/
+│   └── build-extension.yml    # CI：测试 → 打包 zip → 发布 Packages / Release
 ├── tests/
 │   └── run.js                 # 纯函数自测（node tests/run.js）
 └── src/
@@ -226,23 +230,52 @@ node tests/run.js
 
 ## 构建与发布
 
-项目**零构建**，无需打包即可直接加载。GitHub Actions 只负责产出可分发的 zip：
+项目**零构建**，无需打包即可直接加载。GitHub Actions 会产出两种可分发产物：
 
 - **推送到 `main` 或发起 PR**：自动跑 `node tests/run.js` 并打包，zip 作为 **Artifact** 供下载；
-- **推送 `v*` 标签**：测试通过后自动创建 **GitHub Release**，并把 zip 挂到 Release 附件，供用户直接下载安装；
+- **推送 `v*` 标签**：测试通过后同时发布 **GitHub Packages**（npm 包）与 **GitHub Release**（zip 附件）—— 两条分发通道一起更新；
 - **手动触发**：在 Actions 页面选 `Build Chrome Extension` → `Run workflow` 即可随时打包。
 
-本地想自己打包也很简单（zip 内必须把 `manifest.json` 放在根目录）：
+`manifest.json` 的 `version` 是唯一版本来源，CI 会把它同步到 npm 包版本，**不需要手动改 `package.json`**。
+
+### 安装方式
+
+**方式一：直接下载（推荐给普通用户）**
+到仓库 **Releases** 页面下载 `boss-assistant-vX.Y.Z.zip`，解压后在 `chrome://extensions/` 里「加载已解压的扩展程序」选择该目录。
+
+**方式二：从 GitHub Packages 拉取（推荐给开发者）**
+GitHub Packages 即使公开包也需要鉴权，先配置源与 Token（PAT 需含 `read:packages`），再安装：
 
 ```bash
-zip -r boss-assistant.zip manifest.json src LICENSE
+npm config set @ytfei:registry https://npm.pkg.github.com
+npm config set //npm.pkg.github.com/:_authToken <YOUR_GITHUB_TOKEN>
+npm install @ytfei/boss-assistant
 ```
 
-发布新版本时，先把 `manifest.json` 的 `version` 改好并提交，再打 tag 推送即可：
+装好后把 `node_modules/@ytfei/boss-assistant` 目录作为「已解压的扩展程序」加载即可（内含 `manifest.json` 与 `src/`）。也可以直接在仓库 **Packages** 页面下载 tarball。
+
+### 本地打包 / 发版
+
+仓库自带 `Makefile`，`make help` 可查看全部命令：
 
 ```bash
-git tag v0.1.1 && git push origin v0.1.1
+make help       # 查看所有目标
+make test       # 跑纯函数自测
+make package    # 本地打出 boss-assistant.zip（可直接加载）
+make version    # 显示当前版本
 ```
+
+**发版只需一条命令** —— 自动改版本号（`manifest.json` + `package.json`）、提交、打 tag 并推送：
+
+```bash
+make release v0.1.1
+```
+
+执行流程：校验版本格式与工作区是否干净 → 跑自测 → 改写版本号 → 提交 `chore(release): v0.1.1` → 打标签 → 推送到 `origin`。推送后 CI 即自动发布 GitHub Packages 与 Release。
+
+> 发版前请确保工作区干净（`git status` 无改动），否则会中止并提示，避免把无关改动卷进发版提交。
+> 若推送失败（网络 / 权限问题），版本提交与标签已在本地生成，补一条 `git push origin main --follow-tags` 即可。
+> 重复推送同一版本时，Packages 发布会自动跳过，不会因为「版本已存在」而让任务变红。
 
 ---
 

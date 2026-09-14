@@ -1,0 +1,35 @@
+{
+  "name": "@ytfei/boss-assistant",
+  "version": "0.1.0",
+  "description": "完全本地运行的 Boss 直聘求职助手 Chrome 扩展：抓岗位、拆 JD、算匹配、写话术、回消息，数据不出浏览器。",
+  "keywords": [
+    "chrome-extension",
+    "chrome",
+    "boss-zhipin",
+    "job-search",
+    "resume",
+    "llm",
+    "openai-compatible"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ytfei/boss-assistant-v1.git"
+  },
+  "homepage": "https://github.com/ytfei/boss-assistant-v1#readme",
+  "bugs": {
+    "url": "https://github.com/ytfei/boss-assistant-v1/issues"
+  },
+  "files": [
+    "manifest.json",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "test": "node tests/run.js"
+  }
+}
