@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Boss 求职助手 · 开源版</title>
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+
+<div class="p-head">
+  <div class="p-logo">职</div>
+  <div class="p-name">求职助手 · 开源版 <small id="pSub">未连接</small> <span id="modeBadge" class="chip o">规则模式</span></div>
+  <div class="acts">
+    <button id="btnRefresh" title="刷新">⟳</button>
+  </div>
+</div>
+
+<div class="profbar" id="profBar">
+  <span class="profbar-label">档案</span>
+  <select id="profileSel" class="profbar-sel" title="选择当前档案"></select>
+  <button class="profbar-new" id="btnNewProfile" title="新建档案">＋</button>
+</div>
+
+<nav class="p-nav" id="pNav">
+  <button data-nav="jobs" class="on">岗位</button>
+  <button data-nav="script">话术</button>
+  <button data-nav="profile">档案</button>
+  <button data-nav="report">分析</button>
+  <button data-nav="settings">设置</button>
+</nav>
+
+<div class="p-body">
+
+  <!-- 岗位 -->
+  <div class="scene on" data-scene="jobs">
+    <section class="subscene on" data-sub="off">
+      <div class="empty">
+        <div class="ic">🧭</div>
+        <div class="t">请打开 Boss 直聘岗位页</div>
+        <p class="s">支持 <b>/web/geek/jobs</b>、<b>/job_detail/</b> 与 <b>/web/geek/chat</b></p>
+      </div>
+      <div class="card">
+        <div class="card-t">使用方式</div>
+        <ul class="kv" style="margin-bottom:0">
+          <li>在岗位列表页<b>滚动或翻页</b>，插件会自动捕获岗位</li>
+          <li>点底部<b>解析全部 JD</b> 补齐 JD 全文</li>
+          <li>勾选后导出 CSV，或到「分析」看批次画像与匹配度</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="subscene" data-sub="idle">
+      <div class="detect"><span class="dot-live"></span> 已捕获当前页面 <b id="cntJobs">0</b> 个岗位<span id="srcTag" class="chip" style="margin-left:auto"></span></div>
+      <p class="hint" style="margin:0 2px 10px">
+        请求间隔 0.5–2 秒随机，失败自动退避；单页上限 30 条，单日上限 200 条<br>
+        <span id="quotaInfo"></span>
+      </p>
+      <div class="row" style="gap:6px;margin-bottom:12px">
+        <button class="btn btn-ghost btn-sm" style="flex:1" id="btnRescan">重新扫描页面</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1" id="btnDiag">诊断接口</button>
+      </div>
+      <div id="errBox" class="warnbox" style="display:none;margin-bottom:12px"></div>
+      <div class="card">
+        <div class="card-t">本次收集箱 <span class="more" id="btnClear">清空</span></div>
+        <div id="miniList"></div>
+      </div>
+    </section>
+
+    <section class="subscene" data-sub="scraping">
+      <div class="card">
+        <div class="row-between" style="margin-bottom:8px">
+          <b style="font-size:13.5px">正在解析 JD…</b>
+          <span id="pctText" style="font-weight:700;color:var(--brand)">0%</span>
+        </div>
+        <div class="pbar"><i id="pbarFill"></i></div>
+        <div class="row-between" style="margin-top:7px;font-size:12px;color:var(--sub)">
+          <span id="progText">0 / 0</span>
+          <span id="progStat" class="muted"></span>
+        </div>
+        <p class="hint" id="curText" style="margin-top:6px">准备中</p>
+      </div>
+      <div class="scan-log" id="scrapeLog"></div>
+    </section>
+
+    <section class="subscene" data-sub="table">
+      <div class="statbar" id="statBar"></div>
+      <div class="seg" id="statusSeg">
+        <button data-f="all" class="on">全部 <span id="cntAll">0</span></button>
+        <button data-f="parsed">已解析 <span id="cntParsed">0</span></button>
+        <button data-f="unparsed">未解析 <span id="cntUnparsed">0</span></button>
+      </div>
+      <div class="toolbar">
+        <input id="filterInput" placeholder="按标题/公司/技能筛选，如：Redis">
+        <button class="btn btn-ghost btn-sm" id="btnCsv">CSV</button>
+      </div>
+      <div class="row" style="gap:6px;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:6px;color:var(--sub);font-size:12px">
+          <input type="checkbox" id="chkAll" style="accent-color:var(--brand)"> 全选
+        </label>
+        <button class="btn btn-primary btn-sm" id="btnAnalyze" style="margin-left:auto">分析选中</button>
+      </div>
+      <div id="jobList"></div>
+    </section>
+
+    <section class="subscene" data-sub="diag">
+      <div class="card">
+        <div class="card-t">接口诊断 <span class="more" id="btnDiagBack">返回</span></div>
+        <p class="hint" style="margin-bottom:8px">
+          最近捕获到的 <code>/wapi/</code> 请求。若列表里没有岗位相关接口，说明该页面是服务端渲染。
+        </p>
+        <div class="scan-log" id="diagList" style="max-height:340px"></div>
+      </div>
+    </section>
+
+    <!-- 职位详情页 -->
+    <section class="subscene" data-sub="jobdetail">
+      <div class="card" id="jobPageCard"></div>
+      <div class="card" id="jobPageActions" style="display:none"></div>
+    </section>
+
+    <!-- 聊天 -->
+    <section class="subscene" data-sub="chat">
+      <div class="card" id="chatJob" style="padding:10px"></div>
+      <div class="card">
+        <div class="card-t">最近对话</div>
+        <div id="chatMsgs" class="msgs"></div>
+      </div>
+      <div class="card">
+        <div class="row" style="gap:6px">
+          <button class="btn btn-primary btn-sm" style="flex:1" id="btnChatAdvice">生成回复建议</button>
+          <button class="btn btn-ghost btn-sm" style="flex:0 0 56px" id="btnChatAbort" disabled>停止</button>
+        </div>
+        <label class="row" style="margin-top:8px;font-size:12px;color:var(--sub);cursor:pointer">
+          <input type="checkbox" id="chkAutoAdvice" style="accent-color:var(--brand)">
+          HR 发新消息时自动生成（同一会话 60 秒内不重复）
+        </label>
+        <p class="hint" style="margin-top:6px" id="chatHint"></p>
+        <div class="pbar" id="chatBarWrap" style="display:none;margin-top:8px"><i id="chatBarFill"></i></div>
+      </div>
+      <div id="chatAdvice"></div>
+    </section>
+  </div>
+
+  <!-- 话术 -->
+  <div class="scene" data-scene="script">
+    <div class="card">
+      <div class="card-t">生成专属话术</div>
+      <p class="hint" style="margin-bottom:10px">
+        基于「岗位」页选中的第一个岗位 + 当前档案，生成可直接复制发送的开场话术。
+      </p>
+      <button class="btn btn-primary btn-sm btn-block" id="btnGenScript">生成话术</button>
+      <p class="hint" style="margin-top:8px" id="scriptHint"></p>
+    </div>
+    <div id="scriptBody"></div>
+  </div>
+
+  <!-- 档案 -->
+  <div class="scene" data-scene="profile">
+    <div class="card">
+      <div class="card-t">粘贴简历文本</div>
+      <textarea id="textBody" class="ta" rows="6" placeholder="把简历正文粘进来。例：我有 8 年后端开发经验，方向 Go。熟练 Go、Redis、Kafka、微服务。负责订单中心重构，接口 P99 从 800ms 降到 120ms。"></textarea>
+      <input id="textName" class="inp" placeholder="档案名（可选）" style="margin-top:6px">
+      <button class="btn btn-primary btn-sm btn-block" id="btnSaveText" style="margin-top:6px">从文本创建档案</button>
+      <p class="hint" style="margin-top:6px">抽取是尽力而为，抽不准的字段到下面手填补齐。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-t">或手填关键信息</div>
+      <input id="fName" class="inp" placeholder="档案名" style="margin-bottom:6px">
+      <div class="row" style="gap:6px;margin-bottom:6px">
+        <input id="fTitle" class="inp" placeholder="当前职位，如 后端工程师">
+        <input id="fYears" class="inp" placeholder="年限" style="flex:0 0 68px" inputmode="numeric">
+      </div>
+      <input id="fCity" class="inp" placeholder="城市" style="margin-bottom:6px">
+      <input id="fSkills" class="inp" placeholder="技能（逗号分隔）：Go, Redis, Kafka" style="margin-bottom:6px">
+      <textarea id="fHighlights" class="ta" rows="3" placeholder="量化亮点，一行一条：&#10;接口 P99 从 800ms 降到 120ms&#10;二级缓存命中率 99.2%"></textarea>
+      <textarea id="fProjects" class="ta" rows="3" placeholder="项目经历，一行一条：&#10;订单中心重构&#10;支付链路优化"></textarea>
+      <button class="btn btn-primary btn-sm btn-block" id="btnSaveForm" style="margin-top:6px">保存为档案</button>
+    </div>
+
+    <div class="card">
+      <div class="card-t">我的档案</div>
+      <div id="profileList"></div>
+    </div>
+  </div>
+
+  <!-- 分析 -->
+  <div class="scene" data-scene="report">
+    <div class="card">
+      <div class="card-t">批次分析</div>
+      <p class="hint" style="margin-bottom:10px">
+        把「岗位」页<b>已勾选且已解析</b>的岗位的共性要求，与<b>当前档案</b>对照：
+        共性能力、薪资分布、你的优势与不足，以及「哪些岗位最值得投」的排序。
+      </p>
+      <button class="btn btn-primary btn-sm btn-block" id="btnGenReport">开始分析（最多 20 个）</button>
+      <p class="hint" style="margin-top:8px" id="reportHint"></p>
+    </div>
+    <div id="reportBody"></div>
+    <div class="card" id="historyCard" style="display:none">
+      <div class="card-t">本地历史</div>
+      <div id="historyBody"></div>
+    </div>
+  </div>
+
+  <!-- 设置 -->
+  <div class="scene" data-scene="settings">
+    <div class="card">
+      <div class="card-t">LLM 配置（OpenAI 兼容）</div>
+      <p class="hint" style="margin-bottom:8px">
+        不填也能用：薪资分布、词频、匹配三档、雷区预警都是本地规则计算。
+        填了才会启用个性化文案生成。
+      </p>
+      <p class="hint" style="margin-bottom:8px;color:#b54708">
+        ⚠️ 首次使用需授权：浏览器会拦截跨域请求，点「测试连接」时请<b>允许该域名权限</b>，否则会报 Failed to fetch。
+      </p>
+      <input id="llmBase" class="inp" placeholder="https://api.deepseek.com 或 http://localhost:11434" style="margin-bottom:6px">
+      <input id="llmKey" class="inp" type="password" placeholder="API Key" style="margin-bottom:6px">
+      <div class="row" style="gap:6px">
+        <input id="llmFast" class="inp" placeholder="快模型（抽取/分类）" style="flex:1">
+        <input id="llmStrong" class="inp" placeholder="强模型（话术/建议）" style="flex:1">
+      </div>
+      <div class="row" style="gap:6px;margin-top:8px">
+        <button class="btn btn-primary btn-sm" style="flex:1" id="btnSaveLlm">保存</button>
+        <button class="btn btn-ghost btn-sm" style="flex:1" id="btnTestLlm">测试连接</button>
+      </div>
+      <p class="hint" style="margin-top:8px" id="llmHint"></p>
+    </div>
+
+    <div class="card">
+      <div class="card-t">数据与隐私</div>
+      <ul class="kv" style="margin-bottom:8px">
+        <li>岗位、档案、分析结果全部存在<b>本浏览器</b>，不上传任何自有服务器</li>
+        <li>启用 AI 后，JD 与档案片段会发送给你<b>自己配置的 LLM 端点</b></li>
+        <li>插件<b>不会</b>自动打招呼或自动投递，发送永远由你点击</li>
+      </ul>
+      <button class="btn btn-ghost btn-sm btn-block" id="btnClearData" style="color:#b42318">清除全部本地数据</button>
+    </div>
+
+    <div class="card">
+      <div class="card-t">关于</div>
+      <p class="hint" style="margin:0">
+        开源版 · 本地运行的 Boss 直聘求职助手。使用本插件可能涉及与招聘平台用户协议的边界，请自行评估合规风险。
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<div class="p-foot" id="pFoot" style="display:none">
+  <div id="footIdle">
+    <button class="btn btn-primary btn-block" id="btnScrapeFoot">解析全部 JD（<span id="cntTargetFoot">0</span>）</button>
+    <p class="hint" id="footHint" style="margin-top:5px;text-align:center"></p>
+  </div>
+  <div id="footProg" style="display:none">
+    <div class="pbar"><i id="footBar"></i></div>
+    <div class="row-between" style="font-size:11.5px;color:var(--sub);margin-top:4px">
+      <span id="footProgText">0 / 0</span>
+      <span id="footProgStat"></span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- shared.js 里放了 parseJD / parseSalary 等纯函数，侧边栏也要用 -->
+<script src="../shared.js"></script>
+<script src="../llm.js"></script>
+<script src="../profile.js"></script>
+<script src="../agents/skills.js"></script>
+<script src="../agents/batch.js"></script>
+<script src="../agents/matcher.js"></script>
+<script src="../agents/analysis.js"></script>
+<script src="../agents/script.js"></script>
+<script src="../agents/chatRules.js"></script>
+<script src="../agents/chatAdvisor.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>
