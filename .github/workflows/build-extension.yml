@@ -1,0 +1,70 @@
+name: Build Chrome Extension
+
+# 触发时机：
+#   - 推送到 main        → 只构建 + 跑测试，产物作为 Artifact 供下载
+#   - 推送 v* 标签        → 构建 + 跑测试 + 自动创建 GitHub Release 并挂上 zip
+#   - 面向 main 的 PR     → 只跑测试，校验纯函数算法没被改坏
+#   - 手动触发           → 随时可从 Actions 页面跑一次
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# 发布 Release 需要写权限
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 版本号以 manifest.json 为准，避免两处维护
+      - name: Read version
+        id: meta
+        run: |
+          VERSION=$(node -p "require('./manifest.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "插件版本：$VERSION"
+
+      # 移植过来的纯函数算法最容易写错，打包前先跑一遍
+      - name: Run tests
+        run: node tests/run.js
+
+      # Chrome 扩展的 zip 必须把 manifest.json 放在根目录；
+      # 只打包运行所需文件（manifest.json + src + LICENSE），
+      # 不包含 tests / README / .github，保持加载包干净。
+      - name: Package extension
+        id: pack
+        run: |
+          NAME="boss-assistant-v${{ steps.meta.outputs.version }}"
+          mkdir -p dist
+          zip -r "dist/${NAME}.zip" manifest.json src LICENSE
+          echo "zip=dist/${NAME}.zip" >> "$GITHUB_OUTPUT"
+          echo "生成：dist/${NAME}.zip"
+          unzip -l "dist/${NAME}.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: boss-assistant-extension-${{ steps.meta.outputs.version }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+      # 只有推 v* 标签时才发布 Release；main 分支的构建只留 Artifact
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true

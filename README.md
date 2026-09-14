@@ -224,6 +224,28 @@ node tests/run.js
 
 ---
 
+## 构建与发布
+
+项目**零构建**，无需打包即可直接加载。GitHub Actions 只负责产出可分发的 zip：
+
+- **推送到 `main` 或发起 PR**：自动跑 `node tests/run.js` 并打包，zip 作为 **Artifact** 供下载；
+- **推送 `v*` 标签**：测试通过后自动创建 **GitHub Release**，并把 zip 挂到 Release 附件，供用户直接下载安装；
+- **手动触发**：在 Actions 页面选 `Build Chrome Extension` → `Run workflow` 即可随时打包。
+
+本地想自己打包也很简单（zip 内必须把 `manifest.json` 放在根目录）：
+
+```bash
+zip -r boss-assistant.zip manifest.json src LICENSE
+```
+
+发布新版本时，先把 `manifest.json` 的 `version` 改好并提交，再打 tag 推送即可：
+
+```bash
+git tag v0.1.1 && git push origin v0.1.1
+```
+
+---
+
 ## 数据与隐私
 
 - 岗位、档案、分析结果**全部存在本浏览器**（`chrome.storage.local`），不上传任何自有服务器；
