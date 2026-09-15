@@ -7,7 +7,18 @@
 (function (global) {
   'use strict';
 
-  const S = global.BossSkills;
+  /**
+   * ⚠️ BossSkills 必须**延迟取用**，不能在加载时写成 `const S = global.BossSkills`。
+   *    profile.js 在 src/ 下，而 BossSkills 来自 src/agents/skills.js —— 一旦加载顺序
+   *    把它排在前面，S 就是 undefined，点「从文本创建档案」时会抛 TypeError；
+   *    又因为点击回调是 async，错误会被 Promise 吞掉，表现为「点了毫无反应」。
+   *    改为函数内取用后，本文件放在 agents/ 之前或之后都能正常工作。
+   */
+  function bossSkills() {
+    const S = global.BossSkills;
+    if (!S) throw new Error('BossSkills 未加载：请检查 panel.html 的脚本引入顺序');
+    return S;
+  }
 
   const STORE_KEY = 'bossoss_profile_v1';
   const CURRENT_KEY = 'bossoss_profile_current_v1';
@@ -31,6 +42,7 @@
 
   /** 从粘贴的文本里抽取档案（规则版，不调 LLM） */
   function parseProfileText(text, name) {
+    const S = bossSkills();
     const raw = String(text || '').trim();
     const sentences = splitSentences(raw);
 

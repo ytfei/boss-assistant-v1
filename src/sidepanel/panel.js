@@ -711,6 +711,19 @@
   }
 
   // ------------------------------------------------------------ 分析
+  /**
+   * 分析进行中：入口按钮全部置灰，完成后才恢复可点击。
+   * 「分析选中」（岗位页）与「开始分析」（分析页）触发的是同一个任务，必须一起禁用 ——
+   * 否则从岗位页点进来、再切回岗位页，那个按钮看起来还是可点的。
+   */
+  function setAnalyzing(on) {
+    analyzing = !!on;
+    ['#btnAnalyze', '#btnGenReport'].forEach((sel) => {
+      const btn = $(sel);
+      if (btn) btn.disabled = on;
+    });
+  }
+
   async function runAnalysis() {
     if (analyzing) return;
     const profile = currentProfile();
@@ -719,8 +732,7 @@
     const picked = ((state && state.jobs) || []).filter((j) => j.checked && j.jdFetched).slice(0, 20);
     if (!picked.length) return toast('请先在「岗位」页勾选至少一个已解析的岗位');
 
-    analyzing = true;
-    $('#btnGenReport').disabled = true;
+    setAnalyzing(true);
     $('#reportHint').textContent = `正在分析 ${picked.length} 个岗位…`;
 
     try {
@@ -752,8 +764,7 @@
     } catch (err) {
       $('#reportHint').innerHTML = `<span style="color:#b42318">${esc(err.message || '分析失败')}</span>`;
     } finally {
-      analyzing = false;
-      $('#btnGenReport').disabled = false;
+      setAnalyzing(false);
     }
   }
 
